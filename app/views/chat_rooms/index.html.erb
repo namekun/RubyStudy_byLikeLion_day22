@@ -56,20 +56,33 @@
       current.text(parseInt(current.text()) + 1);
     }
     
+    function user_exit(data){
+      var current =  $(`.current${data.chat_room_id}`);
+      current.text(parseInt(current.text()) - 1);
+    }
+    
+    
     var pusher = new Pusher("<%= ENV["Pusher_key"] %>", {
       cluster: "<%= ENV["Pusher_cluster"] %>",
       encrypted: true
       });
 
     var channel = pusher.subscribe('chat_room');
-      channel.bind('create', function(data) {
-        console.log(data);
-        room_created(data);
-      });
+    
+    channel.bind('create', function(data) {
+      console.log(data);
+      room_created(data);
+    });
       
     channel.bind('join',function(data) {
       console.log(data);
       user_joined(data);
     });
+    
+    channel.bind('exit',function(data) {
+      console.log(data);
+      user_exit(data);
+    });
+    
   });
 </script>

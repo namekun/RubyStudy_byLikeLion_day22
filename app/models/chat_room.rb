@@ -6,7 +6,8 @@ class ChatRoom < ApplicationRecord
     #after_commit :method_name, on: :create 
     #after_commit :master_admit_room, on: :create
     after_commit :create_chat_room_notification, on: :create
-
+    
+    
     def create_chat_room_notification
         Pusher.trigger('chat_room', 'create', self.as_json) 
         # (channel_name, event_name, 이벤트에 전달해 줄 data)
@@ -20,4 +21,11 @@ class ChatRoom < ApplicationRecord
     
     # 채팅방이 만들어 질 때, 현재 이 채팅방을 만든 유저가
     # 이 채팅방의 마스터가 되고, 현재 방에 참가한 것으로 된다.
+    
+    def user_exit_room(user)
+        Admission.where(user_id: user.id, chat_room_id: self.id)[0].destroy
+    end
+    
+
+    
 end
